@@ -1,0 +1,32 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  RSpec:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - "3.0"
+          - "3.1"
+          - "3.2"
+          - "3.3"
+    env:
+      BF_MAINNET_PROJECT_ID: mainnet...
+      BF_TESTNET_PROJECT_ID: preview...
+      BF_IPFS_PROJECT_ID: ipfs...
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run tests & publish code coverage
+        uses: paambaati/codeclimate-action@v3.2.0
+        env:
+          CC_TEST_REPORTER_ID: 3ae045b12de0f507d7592d877988b90fef72c273bb3a31289abf3dc1becf8439
+        with:
+          coverageCommand: bundle exec rspec
